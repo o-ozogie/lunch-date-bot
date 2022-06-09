@@ -44,6 +44,7 @@ def get_events(path: str) -> list[Event]:
 
 @dataclass
 class Group:
+    id: str
     name: str
     member_ids: list[str]
 
@@ -51,7 +52,7 @@ def get_groups(join_groups: list[str]) -> list[Group]:
     groups = []
     for usergroup in client.usergroups_list(include_users=True)['usergroups']:
         if usergroup['handle'] in join_groups:
-            groups.append(Group(name=usergroup['handle'], member_ids=usergroup['users']))
+            groups.append(Group(id=usergroup['id'], name=usergroup['handle'], member_ids=usergroup['users']))
     return groups
 
 def process(event: Event):
@@ -63,12 +64,11 @@ def process(event: Event):
 
 def ask_absentee(event: Event) -> dict[str, str]: # return channel_id, ts
     mentions = ''
-    for group in event.join_groups:
-        mentions += f'@{group} '
+    for group in get_groups(join_groups=event.join_groups):
+        mentions += f'<!subteam^{group.id}> '
     response = client.chat_postMessage(
         channel=event.channel,
         mrkdwn=True,
-        link_names=True,
         text=f'*{event.name}*, 불참자는 스레드로 알려주세요!' + '\n' + mentions
     )
     return [response['channel'], response['ts']]
