@@ -10,8 +10,8 @@ import random
 from slack_sdk import WebClient
 
 
-client = WebClient(token=os.environ['APP_SECRET'])
-scheduler = BlockingScheduler()
+client = WebClient(token=os.getenv('APP_SECRET'))
+scheduler = BlockingScheduler(timezone="Asia/Seoul")
 
 @dataclass
 class Event:
@@ -125,7 +125,8 @@ def group_size_distribute(attendee_groups: list[list[str]], limit: int) -> list[
 
 
 if __name__ == '__main__':
-    for event in get_events('./resources/events.json'):
+    events = get_events('./resources/events.json')
+    for event in events:
         scheduler.add_job(
             process,
             trigger='cron',
@@ -135,4 +136,6 @@ if __name__ == '__main__':
             args=[event],
             id=str(time())
         )
+    print("*scheduler start*")
+    print("events: " + str(events))
     scheduler.start()
