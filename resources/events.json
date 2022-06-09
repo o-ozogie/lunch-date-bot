@@ -1,0 +1,14 @@
+[
+    {
+        "name": "엔지니어 런치데이트",
+        "started_at": "2022-01-01",
+        "channel": "ml-engineer-random",
+        "join_groups": ["dev_luda", "mle"],
+        "trigger_weekday": "fri",
+        "trigger_hour": 11,
+        "trigger_minute": 0,
+        "limit_type": "group_count", 
+        "limit": 2,
+        "week_interval": 1
+    }
+]
