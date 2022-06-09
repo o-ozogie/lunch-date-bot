@@ -81,7 +81,10 @@ def notice_lunch_group(event: Event, absentee_message: list[str, str]):
         notice += '- ' + ', '.join(list(map(lambda user_id: f'<@{user_id}>', group))) + '\n'
     client.chat_postMessage(channel=event.channel, mrkdwn=True, text=notice)
 
-def get_lunch_groups(event: Event, groups: list[Group], absentee_ids: list[str]) -> list[list[str]]:
+def get_lunch_groups(event: Event, groups: list[Group], absentee_ids: list[str]) -> list[list[str]]:    
+    def shuffle(array: list) -> list:
+        random.shuffle(array)
+        return array
     attendee_groups = list(map(lambda group: shuffle([member_id for member_id in group.member_ids if member_id not in absentee_ids]), groups))
     return list(map(lambda group: shuffle(group), distribute(event=event, attendee_groups=attendee_groups)))
 
@@ -119,10 +122,6 @@ def group_size_distribute(attendee_groups: list[list[str]], limit: int) -> list[
             y += 1
 
     return groups
-
-def shuffle(array: list) -> list:
-    random.shuffle(array)
-    return array
 
 
 if __name__ == '__main__':
